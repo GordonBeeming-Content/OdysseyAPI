@@ -4,19 +4,29 @@ using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
-public class GetByIdTests
+[Collection(OdysseyAPICollection.Definition)]
+public sealed class GetByIdTests
 {
+  private readonly HttpClient _httpClient;
+  private readonly OdysseyAPIFactory _factory;
+  private readonly string _userId;
+
+  public GetByIdTests(OdysseyAPIFactory factory)
+  {
+    _userId = Guid.NewGuid().ToString();
+    _factory = factory;
+    _httpClient = _factory.CreateAuthenticatedClient(_userId);
+  }
+
   [Fact]
   public async Task GetById_WhenCalledWithInValidId_ShouldReturnNotFound()
   {
     // Arrange
-    var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri("https://localhost:7091");
     var id = 999;
     var expectedStatusCode = HttpStatusCode.NotFound;
 
     // Act
-    var response = await httpClient.GetAsync($"/Contacts/{id}");
+    var response = await _httpClient.GetAsync($"/Contacts/{id}");
 
     // Assert
     Assert.False(response.IsSuccessStatusCode);
@@ -27,13 +37,12 @@ public class GetByIdTests
   public async Task GetById_WhenCalledWithValidId_ShouldReturnAContactModel()
   {
     // Arrange
-    var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri("https://localhost:7091");
+    await _factory.CreateContacts(1);
     var id = 1;
     var expectedStatusCode = HttpStatusCode.OK;
 
     // Act
-    var response = await httpClient.GetAsync($"/Contacts/{id}");
+    var response = await _httpClient.GetAsync($"/Contacts/{id}");
 
     // Assert
     Assert.True(response.IsSuccessStatusCode);

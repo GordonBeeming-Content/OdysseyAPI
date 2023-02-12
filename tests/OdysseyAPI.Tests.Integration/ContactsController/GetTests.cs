@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using OdysseyAPI.Models;
+﻿using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
@@ -12,7 +10,7 @@ public sealed class GetTests
   private readonly string _userId;
 
   public GetTests(OdysseyAPIFactory factory)
-{
+  {
     _userId = Guid.NewGuid().ToString();
     _factory = factory;
     _httpClient = _factory.CreateAuthenticatedClient(_userId);
@@ -22,8 +20,7 @@ public sealed class GetTests
   public async Task Get_WhenCalled_ShouldReturnAListOfContactModel()
   {
     // Arrange
-    var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri("https://localhost:7091");
+    await _factory.CreateContacts(5);
     var expectedStatusCode = HttpStatusCode.OK;
 
     // Act

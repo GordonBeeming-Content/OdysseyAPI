@@ -4,20 +4,30 @@ using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
-public class CreateTests
+[Collection(OdysseyAPICollection.Definition)]
+public sealed class CreateTests
 {
+  private readonly HttpClient _httpClient;
+  private readonly OdysseyAPIFactory _factory;
+  private readonly string _userId;
+
+  public CreateTests(OdysseyAPIFactory factory)
+  {
+    _userId = Guid.NewGuid().ToString();
+    _factory = factory;
+    _httpClient = _factory.CreateAuthenticatedClient(_userId);
+  }
+
   [Fact]
   public async Task Create_WhenCalledWithInValidModel_ShouldReturnBadRequest()
   {
     // Arrange
-    var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri("https://localhost:7091");
     var expectedStatusCode = HttpStatusCode.BadRequest;
     CreateContactRequest? request = null;
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await httpClient.PutAsync($"/Contacts", requestContent);
+    var response = await _httpClient.PutAsync($"/Contacts", requestContent);
 
     // Assert
     Assert.False(response.IsSuccessStatusCode);
@@ -28,8 +38,6 @@ public class CreateTests
   public async Task Create_WhenCalledWithValidId_ShouldReturnAContactModel()
   {
     // Arrange
-    var httpClient = new HttpClient();
-    httpClient.BaseAddress = new Uri("https://localhost:7091");
     var expectedStatusCode = HttpStatusCode.Created;
     var expectedLocationHeaderStartsWith = "/Contacts/";
     var request = new CreateContactRequest
@@ -40,7 +48,7 @@ public class CreateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await httpClient.PutAsync($"/Contacts", requestContent);
+    var response = await _httpClient.PutAsync($"/Contacts", requestContent);
 
     // Assert
     Assert.True(response.IsSuccessStatusCode);
