@@ -137,9 +137,9 @@ public sealed class CreateTests
       Name = record.Name,
       Number = record.Number,
       AvatarUrl = null,
-      Email = "me@gordonbeeming.com",
+      Email = ValidGravatarEmail,
     };
-    var expectedAvatarUrl = "https://www.gravatar.com/avatar/0ac4fdce4433658b79f3dda546a720f8";
+    var expectedAvatarUrl = $"{_factory.GravatarServerUrl}{ValidGravatarEmailAvatarRelativeUrl}";
 
     // Act
     var requestContent = JsonContent.Create(request);
@@ -164,7 +164,7 @@ public sealed class CreateTests
       Name = record.Name,
       Number = record.Number,
       AvatarUrl = null,
-      Email = "fake@gordonbeeming.com",
+      Email = InValidGravatarEmail,
     };
 
     // Act

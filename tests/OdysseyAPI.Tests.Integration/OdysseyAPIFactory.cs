@@ -8,12 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using OdysseyAPI.Data;
 using WebMotions.Fake.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
+using OdysseyAPI.Tests.Integration.Servers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OdysseyAPI.Tests.Integration;
 
 public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
   private readonly TestcontainerDatabase _dbContainer;
+  private readonly GravatarServer _gravatarServer;
 
   public OdysseyAPIFactory()
   {
@@ -26,7 +29,10 @@ public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyn
         .WithExposedPort(1433)
         .WithPortBinding(1433, true)
         .Build();
+    _gravatarServer = new ();
   }
+
+  public string? GravatarServerUrl => _gravatarServer.Url;
 
   protected override void ConfigureWebHost(IWebHostBuilder builder)
   {
@@ -42,6 +48,11 @@ public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyn
         options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
       }).AddFakeJwtBearer();
+
+      services.AddHttpClient("Gravatar", configure =>
+      {
+        configure.BaseAddress = new Uri(_gravatarServer.Url!);
+      });
     });
   }
 
@@ -60,6 +71,8 @@ public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyn
 
   public async Task InitializeAsync()
   {
+    _gravatarServer.Start();
+    _gravatarServer.SetupAvatar(ValidGravatarEmail);
     await _dbContainer.StartAsync();
     RunMigrations();
   }
@@ -68,6 +81,7 @@ public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyn
   {
     await _dbContainer.DisposeAsync();
     await base.DisposeAsync();
+    _gravatarServer.Dispose();
   }
 
   private void RunMigrations()

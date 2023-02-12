@@ -4,3 +4,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Xunit;
 global using OdysseyAPI.Tests.Integration.Extensions;
 global using FluentAssertions;
+global using static OdysseyAPI.Tests.Integration.GlobalConstants;
