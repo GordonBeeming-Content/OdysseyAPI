@@ -4,8 +4,20 @@ using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
-public class GetTests
+[Collection(OdysseyAPICollection.Definition)]
+public sealed class GetTests
 {
+  private readonly HttpClient _httpClient;
+  private readonly OdysseyAPIFactory _factory;
+  private readonly string _userId;
+
+  public GetTests(OdysseyAPIFactory factory)
+{
+    _userId = Guid.NewGuid().ToString();
+    _factory = factory;
+    _httpClient = _factory.CreateAuthenticatedClient(_userId);
+  }
+
   [Fact]
   public async Task Get_WhenCalled_ShouldReturnAListOfContactModel()
   {
