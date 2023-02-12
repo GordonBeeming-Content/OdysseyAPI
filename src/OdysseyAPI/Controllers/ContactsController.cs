@@ -5,16 +5,16 @@ namespace OdysseyAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public sealed class WeatherForecastController : ControllerBase
+public sealed class ContactsController : ControllerBase
 {
   private static readonly string[] _summaries = new[]
   {
       "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
   };
 
-  private readonly ILogger<WeatherForecastController> _logger;
+  private readonly ILogger<ContactsController> _logger;
 
-  public WeatherForecastController(ILogger<WeatherForecastController> logger)
+  public ContactsController(ILogger<ContactsController> logger)
   {
     _logger = logger;
   }
