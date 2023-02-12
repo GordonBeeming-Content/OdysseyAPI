@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace OdysseyAPI.Models;
 
 #pragma warning disable CS8618
-public sealed class ContactModel
+public sealed class CreateContactRequest
 {
-  public int Id { get; set; }
-
+  [Required]
   public string Name { get; set; }
 
+  [Required]
   public string Number { get; set; }
 }

@@ -40,7 +40,7 @@ public sealed class ContactsController : ControllerBase
   public async Task<ActionResult> GetById(int id)
   {
     _logger.LogInformation("Getting contact {Contact Id}", id);
-    var result = await _phonebookDbContext.Contacts
+    var response = await _phonebookDbContext.Contacts
       .Select(o => new ContactModel
       {
         Id = o.Id,
@@ -49,55 +49,36 @@ public sealed class ContactsController : ControllerBase
 
       })
       .FirstOrDefaultAsync(o => o.Id == id);
-    if (result == null)
+    if (response == null)
     {
       return NotFound();
     }
-    return Ok(result);
+    return Ok(response);
   }
 
   [HttpPut]
   [ProducesResponseType(typeof(ContactModel), StatusCodes.Status201Created)]
   [Consumes("application/json")]
-  public async Task<ActionResult> Create(ContactModel model)
+  public async Task<ActionResult> Create(CreateContactRequest request)
   {
     _logger.LogInformation("Creating new contact");
-    var contact = new Contact
+    var newContact = new Contact
     {
-      Name = model.Name,
-      Number = model.Number
+      Name = request.Name,
+      Number = request.Number
     };
-    _phonebookDbContext.Contacts.Add(contact);
+    _phonebookDbContext.Contacts.Add(newContact);
     await _phonebookDbContext.SaveChangesAsync();
 
     var dbContact = await _phonebookDbContext.Contacts
-      .FirstOrDefaultAsync(o => o.Id == contact.Id);
-    model = new ContactModel
+      .FirstOrDefaultAsync(o => o.Id == newContact.Id);
+    var response = new ContactModel
     {
       Id = dbContact!.Id,
       Name = dbContact.Name,
       Number = dbContact.Number
     };
-    var getUri = Url.Action(nameof(GetById), new { id = model.Id, });
-    return Created(getUri!, model);
-  }
-
-  [HttpPost]
-  [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
-  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-  [Consumes("application/json")]
-  public async Task<ActionResult> Update(ContactModel model)
-  {
-    _logger.LogInformation("Updating contact {Contact Id}", model.Id);
-    var contact = await _phonebookDbContext.Contacts
-      .FirstOrDefaultAsync(o => o.Id == model.Id);
-    if (contact == null)
-    {
-      return NotFound();
-    }
-    contact.Name = model.Name;
-    contact.Number = model.Number;
-    await _phonebookDbContext.SaveChangesAsync();
-    return Ok(model);
+    var getUri = Url.Action(nameof(GetById), new { id = response.Id, });
+    return Created(getUri!, response);
   }
 }
