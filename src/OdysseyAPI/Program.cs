@@ -36,6 +36,7 @@ builder.Services.AddDbContext<PhonebookDbContext>(options =>
 builder.Services.AddAuthentication(options =>
 {
   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
   options.Authority = "https://gordonbeeming.au.auth0.com/";

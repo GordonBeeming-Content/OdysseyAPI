@@ -17,6 +17,20 @@ public sealed class GetTests
   }
 
   [Fact]
+  public async Task Get_WhenNoAuth_ShouldReturnUnauthorized()
+  {
+    // Arrange
+    var httpClient = _factory.CreateClient();
+
+    // Act
+    var response = await httpClient.GetAsync("/Contacts");
+
+    // Assert
+    response.IsSuccessStatusCode.Should().BeFalse();
+    response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+  }
+
+  [Fact]
   public async Task Get_WhenCalled_ShouldReturnAListOfContactModel()
   {
     // Arrange

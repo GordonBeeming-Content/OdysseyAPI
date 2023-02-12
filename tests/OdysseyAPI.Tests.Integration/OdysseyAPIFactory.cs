@@ -40,6 +40,7 @@ public sealed class OdysseyAPIFactory : WebApplicationFactory<IApiMarker>, IAsyn
       services.AddAuthentication(options =>
       {
         options.DefaultAuthenticateScheme = FakeJwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = FakeJwtBearerDefaults.AuthenticationScheme;
       }).AddFakeJwtBearer();
     });
   }

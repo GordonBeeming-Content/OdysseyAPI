@@ -17,10 +17,25 @@ public sealed class CreateTests
   }
 
   [Fact]
+  public async Task Create_WhenNoAuth_ShouldReturnUnauthorized()
+  {
+    // Arrange
+    CreateContactRequest? request = null;
+    var httpClient = _factory.CreateClient();
+
+    // Act
+    var requestContent = JsonContent.Create(request);
+    var response = await httpClient.PutAsync($"/Contacts", requestContent);
+
+    // Assert
+    response.IsSuccessStatusCode.Should().BeFalse();
+    response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+  }
+
+  [Fact]
   public async Task Create_WhenCalledWithInValidModel_ShouldReturnBadRequest()
   {
     // Arrange
-    var expectedStatusCode = HttpStatusCode.BadRequest;
     CreateContactRequest? request = null;
 
     // Act
@@ -28,8 +43,8 @@ public sealed class CreateTests
     var response = await _httpClient.PutAsync($"/Contacts", requestContent);
 
     // Assert
-    Assert.False(response.IsSuccessStatusCode);
-    Assert.Equal(expectedStatusCode, response.StatusCode);
+    response.IsSuccessStatusCode.Should().BeFalse();
+    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
   }
 
   [Fact]

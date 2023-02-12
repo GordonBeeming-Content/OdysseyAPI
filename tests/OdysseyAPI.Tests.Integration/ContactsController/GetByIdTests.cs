@@ -17,6 +17,21 @@ public sealed class GetByIdTests
   }
 
   [Fact]
+  public async Task GetById_WhenNoAuth_ShouldReturnUnauthorized()
+  {
+    // Arrange
+    var id = 999;
+    var httpClient = _factory.CreateClient();
+
+    // Act
+    var response = await httpClient.GetAsync($"/Contacts/{id}");
+
+    // Assert
+    response.IsSuccessStatusCode.Should().BeFalse();
+    response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+  }
+
+  [Fact]
   public async Task GetById_WhenCalledWithInValidId_ShouldReturnNotFound()
   {
     // Arrange
