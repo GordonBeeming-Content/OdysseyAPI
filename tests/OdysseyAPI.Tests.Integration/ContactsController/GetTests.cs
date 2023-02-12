@@ -27,7 +27,7 @@ public sealed class GetTests
     var expectedStatusCode = HttpStatusCode.OK;
 
     // Act
-    var response = await httpClient.GetAsync("/Contacts");
+    var response = await _httpClient.GetAsync("/Contacts");
 
     // Assert
     Assert.True(response.IsSuccessStatusCode);
