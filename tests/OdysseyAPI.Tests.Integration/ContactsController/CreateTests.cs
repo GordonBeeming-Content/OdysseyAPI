@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using OdysseyAPI.Models;
+﻿using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
@@ -38,8 +36,6 @@ public sealed class CreateTests
   public async Task Create_WhenCalledWithValidId_ShouldReturnAContactModel()
   {
     // Arrange
-    var expectedStatusCode = HttpStatusCode.Created;
-    var expectedLocationHeaderStartsWith = "/Contacts/";
     var request = new CreateContactRequest
     {
       Name = $"Gordon Beeming - {Guid.NewGuid()}",
@@ -51,15 +47,14 @@ public sealed class CreateTests
     var response = await _httpClient.PutAsync($"/Contacts", requestContent);
 
     // Assert
-    Assert.True(response.IsSuccessStatusCode);
-    Assert.Equal(expectedStatusCode, response.StatusCode);
+    response.IsSuccessStatusCode.Should().BeTrue();
+    response.StatusCode.Should().Be(HttpStatusCode.Created);
     var locationHeader = response.Headers.Location?.ToString();
-    Assert.NotNull(locationHeader);
-    Assert.StartsWith(expectedLocationHeaderStartsWith, locationHeader);
+    locationHeader.Should().NotBeNull();
+    locationHeader.Should().StartWith("/Contacts/");
 
     var result = await response.Content.ReadFromJsonAsync<ContactModel>();
-    Assert.NotNull(result);
-    var expectedLocationHeader = $"{expectedLocationHeaderStartsWith}{result.Id}";
-    Assert.Equal(expectedLocationHeader, locationHeader);
+    result.Should().NotBeNull();
+    locationHeader.Should().Be($"/Contacts/{result!.Id}");
   }
 }

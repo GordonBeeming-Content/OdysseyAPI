@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using OdysseyAPI.Models;
+﻿using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Tests.Integration.ContactsController;
 
@@ -23,14 +21,13 @@ public sealed class GetByIdTests
   {
     // Arrange
     var id = 999;
-    var expectedStatusCode = HttpStatusCode.NotFound;
 
     // Act
     var response = await _httpClient.GetAsync($"/Contacts/{id}");
 
     // Assert
-    Assert.False(response.IsSuccessStatusCode);
-    Assert.Equal(expectedStatusCode, response.StatusCode);
+    response.IsSuccessStatusCode.Should().BeFalse();
+    response.StatusCode.Should().Be(HttpStatusCode.NotFound);
   }
 
   [Fact]
@@ -39,17 +36,16 @@ public sealed class GetByIdTests
     // Arrange
     await _factory.CreateContacts(1);
     var id = 1;
-    var expectedStatusCode = HttpStatusCode.OK;
 
     // Act
     var response = await _httpClient.GetAsync($"/Contacts/{id}");
 
     // Assert
-    Assert.True(response.IsSuccessStatusCode);
-    Assert.Equal(expectedStatusCode, response.StatusCode);
+    response.IsSuccessStatusCode.Should().BeTrue();
+    response.StatusCode.Should().Be(HttpStatusCode.OK);
 
     var result = await response.Content.ReadFromJsonAsync<ContactModel>();
-    Assert.NotNull(result);
-    Assert.Equal(id, result.Id);
+    result.Should().NotBeNull();
+    result!.Id.Should().Be(id);
   }
 }

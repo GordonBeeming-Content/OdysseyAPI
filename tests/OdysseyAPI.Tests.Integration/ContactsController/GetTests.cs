@@ -21,17 +21,16 @@ public sealed class GetTests
   {
     // Arrange
     await _factory.CreateContacts(5);
-    var expectedStatusCode = HttpStatusCode.OK;
 
     // Act
     var response = await _httpClient.GetAsync("/Contacts");
 
     // Assert
-    Assert.True(response.IsSuccessStatusCode);
-    Assert.Equal(expectedStatusCode, response.StatusCode);
+    response.IsSuccessStatusCode.Should().BeTrue();
+    response.StatusCode.Should().Be(HttpStatusCode.OK);
 
     var result = await response.Content.ReadFromJsonAsync<List<ContactModel>>();
-    Assert.NotNull(result);
-    Assert.NotEmpty(result);
+    result.Should().NotBeNull();
+    result.Should().NotBeEmpty();
   }
 }
