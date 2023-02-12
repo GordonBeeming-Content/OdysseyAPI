@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OdysseyAPI.Data;
 using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public sealed class ContactsController : ControllerBase
@@ -19,6 +21,7 @@ public sealed class ContactsController : ControllerBase
 
   [HttpGet]
   [ProducesResponseType(typeof(List<ContactModel>), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
   public async Task<ActionResult> Get()
   {
     _logger.LogInformation("Getting contacts");
@@ -37,6 +40,7 @@ public sealed class ContactsController : ControllerBase
   [HttpGet("{id}")]
   [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
   [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
   public async Task<ActionResult> GetById(int id)
   {
     _logger.LogInformation("Getting contact {Contact Id}", id);
@@ -58,6 +62,7 @@ public sealed class ContactsController : ControllerBase
 
   [HttpPut]
   [ProducesResponseType(typeof(ContactModel), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
   [Consumes("application/json")]
   public async Task<ActionResult> Create(CreateContactRequest request)
   {
