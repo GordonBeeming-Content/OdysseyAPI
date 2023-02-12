@@ -19,5 +19,11 @@ public sealed class ContactConfiguration
     builder.Property(t => t.Number)
         .HasMaxLength(20)
         .IsRequired();
+
+    builder.Property(t => t.Email)
+        .HasMaxLength(100);
+
+    builder.Property(t => t.AvatarUrl)
+        .HasMaxLength(1024);
   }
 }

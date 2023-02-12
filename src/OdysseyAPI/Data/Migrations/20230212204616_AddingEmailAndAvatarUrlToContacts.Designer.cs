@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OdysseyAPI.Data;
 
@@ -10,9 +11,11 @@ using OdysseyAPI.Data;
 namespace OdysseyAPI.Data.Migrations
 {
     [DbContext(typeof(PhonebookDbContext))]
-    partial class PhonebookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230212204616_AddingEmailAndAvatarUrlToContacts")]
+    partial class AddingEmailAndAvatarUrlToContacts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
