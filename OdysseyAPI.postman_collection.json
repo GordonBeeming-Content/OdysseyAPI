@@ -1,77 +1,280 @@
 {
 	"info": {
-		"_postman_id": "4f562d91-f1bf-481a-b8b3-3668d1e3f994",
-		"name": "00-Setup",
+		"_postman_id": "3525309c-2840-4569-97d4-99b3ee6bf143",
+		"name": "01-Dependencies",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "24427466"
 	},
 	"item": [
 		{
-			"name": "List Contacts",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:7091/Contacts",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "7091",
-					"path": [
-						"Contacts"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Contact By Id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:7091/Contacts/4",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "7091",
-					"path": [
-						"Contacts",
-						"4"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Contact",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Gordon Beeming\",\r\n    \"number\": \"078 555 1234\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Auth0",
+			"item": [
+				{
+					"name": "Get Device Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let resp = pm.response.json();\r",
+									"pm.environment.set(\"device_code\", resp.device_code);"
+								],
+								"type": "text/javascript"
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid profile offline_access",
+									"type": "text"
+								},
+								{
+									"key": "audience",
+									"value": "https://OdysseyAPI/api",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{auth0_domain}}/oauth/device/code",
+							"host": [
+								"{{auth0_domain}}"
+							],
+							"path": [
+								"oauth",
+								"device",
+								"code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let resp = pm.response.json();\r",
+									"if (resp.access_token){\r",
+									"    pm.environment.set(\"access_token\", resp.access_token);\r",
+									"}\r",
+									"if (resp.refresh_token){\r",
+									"    pm.environment.set(\"refresh_token\", resp.refresh_token);\r",
+									"}\r",
+									"if (resp.id_token){\r",
+									"    pm.environment.set(\"id_token\", resp.id_token);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "urn:ietf:params:oauth:grant-type:device_code",
+									"type": "text"
+								},
+								{
+									"key": "device_code",
+									"value": "{{device_code}}",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{auth0_domain}}/oauth/token",
+							"host": [
+								"{{auth0_domain}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let resp = pm.response.json();\r",
+									"if (resp.access_token){\r",
+									"    pm.environment.set(\"access_token\", resp.access_token);\r",
+									"}\r",
+									"if (resp.id_token){\r",
+									"    pm.environment.set(\"id_token\", resp.id_token);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{auth0_domain}}/oauth/token",
+							"host": [
+								"{{auth0_domain}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Phonebook",
+			"item": [
+				{
+					"name": "List Contacts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/Contacts",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"Contacts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/Contacts/4",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"Contacts",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contact",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Gordon Beeming\",\r\n    \"number\": \"078 555 1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/Contacts",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"Contacts"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{access_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
 					}
 				},
-				"url": {
-					"raw": "https://localhost:7091/Contacts",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "7091",
-					"path": [
-						"Contacts"
-					]
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
