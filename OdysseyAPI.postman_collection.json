@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "3525309c-2840-4569-97d4-99b3ee6bf143",
-		"name": "01-Dependencies",
+		"_postman_id": "043e0d88-cd89-4540-810a-f28a93b15954",
+		"name": "02-Gravatar-Feature",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "24427466"
 	},
@@ -225,7 +225,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Gordon Beeming\",\r\n    \"number\": \"078 555 1234\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Gordon Beeming\",\r\n    \"number\": \"078 555 1234\",\r\n    \"email\": \"me@gordonbeeming.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
