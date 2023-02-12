@@ -11,4 +11,8 @@ public sealed class CreateContactRequest
 
   [Required]
   public string Number { get; set; }
+
+  public string? Email { get; set; }
+
+  public string? AvatarUrl { get; set; }
 }

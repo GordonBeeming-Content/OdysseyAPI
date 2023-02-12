@@ -62,5 +62,8 @@ public sealed class GetByIdTests
     var result = await response.Content.ReadFromJsonAsync<ContactModel>();
     result.Should().NotBeNull();
     result!.Id.Should().Be(id);
+    result.Name.Should().NotBeNullOrWhiteSpace();
+    result.Number.Should().NotBeNullOrWhiteSpace();
+    result.AvatarUrl.Should().NotBeNullOrWhiteSpace();
   }
 }

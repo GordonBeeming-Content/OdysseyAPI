@@ -43,6 +43,12 @@ builder.Services.AddAuthentication(options =>
   options.Audience = "https://OdysseyAPI/api";
 });
 
+builder.Services.AddHttpClient("Gravatar", configure =>
+{
+  configure.BaseAddress = new Uri("https://www.gravatar.com");
+});
+builder.Services.AddTransient<IGravatarService, GravatarService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdysseyAPI.Data;
 using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Controllers;
@@ -30,8 +29,8 @@ public sealed class ContactsController : ControllerBase
       {
         Id = o.Id,
         Name = o.Name,
-        Number = o.Number
-
+        Number = o.Number,
+        AvatarUrl = o.AvatarUrl,
       })
       .ToListAsync();
     return Ok(result);
@@ -49,8 +48,8 @@ public sealed class ContactsController : ControllerBase
       {
         Id = o.Id,
         Name = o.Name,
-        Number = o.Number
-
+        Number = o.Number,
+        AvatarUrl = o.AvatarUrl,
       })
       .FirstOrDefaultAsync(o => o.Id == id);
     if (response == null)
@@ -64,14 +63,20 @@ public sealed class ContactsController : ControllerBase
   [ProducesResponseType(typeof(ContactModel), StatusCodes.Status201Created)]
   [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
   [Consumes("application/json")]
-  public async Task<ActionResult> Create(CreateContactRequest request)
+  public async Task<ActionResult> Create(CreateContactRequest request, [FromServices] IGravatarService gravatarService)
   {
     _logger.LogInformation("Creating new contact");
     var newContact = new Contact
     {
       Name = request.Name,
-      Number = request.Number
+      Number = request.Number,
+      AvatarUrl = request.AvatarUrl,
+      Email = request.Email,
     };
+    if (string.IsNullOrWhiteSpace(newContact.AvatarUrl) && !string.IsNullOrWhiteSpace(newContact.Email))
+    {
+      newContact.AvatarUrl = await gravatarService.GetGravatarForEmail(newContact.Email, true);
+    }
     _phonebookDbContext.Contacts.Add(newContact);
     await _phonebookDbContext.SaveChangesAsync();
 
@@ -81,7 +86,8 @@ public sealed class ContactsController : ControllerBase
     {
       Id = dbContact!.Id,
       Name = dbContact.Name,
-      Number = dbContact.Number
+      Number = dbContact.Number,
+      AvatarUrl = dbContact.AvatarUrl,
     };
     var getUri = Url.Action(nameof(GetById), new { id = response.Id, });
     return Created(getUri!, response);
