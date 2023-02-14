@@ -92,4 +92,42 @@ public sealed class ContactsController : ControllerBase
     var getUri = Url.Action(nameof(GetById), new { id = response.Id, });
     return Created(getUri!, response);
   }
+
+  [HttpPost("{id}")]
+  [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+  [Consumes("application/json")]
+  public async Task<ActionResult> Update(int id, UpdateContactRequest request, [FromServices] IGravatarService gravatarService)
+  {
+    _logger.LogInformation("Updating contact {Contact Id}", id);
+
+    var dbContact = await _phonebookDbContext.Contacts
+      .FirstOrDefaultAsync(o => o.Id == id);
+    if (dbContact == null)
+    {
+      return NotFound();
+    }
+
+    dbContact.Name = request.Name;
+    dbContact.Number = request.Number;
+    dbContact.AvatarUrl = request.AvatarUrl;
+    dbContact.Email = request.Email;
+    if (string.IsNullOrWhiteSpace(dbContact.AvatarUrl) && !string.IsNullOrWhiteSpace(dbContact.Email))
+    {
+      dbContact.AvatarUrl = await gravatarService.GetGravatarForEmail(dbContact.Email, true);
+    }
+    await _phonebookDbContext.SaveChangesAsync();
+
+    dbContact = await _phonebookDbContext.Contacts
+      .FirstOrDefaultAsync(o => o.Id == id);
+    var response = new ContactModel
+    {
+      Id = dbContact!.Id,
+      Name = dbContact.Name,
+      Number = dbContact.Number,
+      AvatarUrl = dbContact.AvatarUrl,
+    };
+    var getUri = Url.Action(nameof(GetById), new { id = response.Id, });
+    return Ok(response);
+  }
 }

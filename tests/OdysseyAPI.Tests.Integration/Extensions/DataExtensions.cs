@@ -6,7 +6,7 @@ namespace OdysseyAPI.Tests.Integration.Extensions;
 
 public static class DataExtensions
 {
-  public static async Task CreateContacts(this OdysseyAPIFactory factory, int rows)
+  public static async Task<List<Contact>> CreateContacts(this OdysseyAPIFactory factory, int rows)
   {
     var testContacts = factory.ContactFaker();
 
@@ -19,7 +19,7 @@ public static class DataExtensions
       await dbContext.Contacts.AddRangeAsync(data);
       await dbContext.SaveChangesAsync();
     }
-
+    return data;
   }
   public static Faker<Contact> ContactFaker(this OdysseyAPIFactory factory) => new Faker<Contact>()
       .UseSeed(42)
