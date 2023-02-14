@@ -20,7 +20,7 @@ public sealed class GetByIdTests
   public async Task GetById_WhenNoAuth_ShouldReturnUnauthorized()
   {
     // Arrange
-    var id = 999;
+    var id = 1;
     var httpClient = _factory.CreateClient();
 
     // Act
@@ -35,7 +35,7 @@ public sealed class GetByIdTests
   public async Task GetById_WhenCalledWithInValidId_ShouldReturnNotFound()
   {
     // Arrange
-    var id = 999;
+    var id = 99999;
 
     // Act
     var response = await _httpClient.GetAsync($"/Contacts/{id}");
@@ -49,11 +49,10 @@ public sealed class GetByIdTests
   public async Task GetById_WhenCalledWithValidId_ShouldReturnAContactModel()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var id = 1;
+    var testData = await _factory.CreateContacts(1);
 
     // Act
-    var response = await _httpClient.GetAsync($"/Contacts/{id}");
+    var response = await _httpClient.GetAsync($"/Contacts/{testData[0].Id}");
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -61,7 +60,7 @@ public sealed class GetByIdTests
 
     var result = await response.Content.ReadFromJsonAsync<ContactModel>();
     result.Should().NotBeNull();
-    result!.Id.Should().Be(id);
+    result!.Id.Should().Be(testData[0].Id);
     result.Name.Should().NotBeNullOrWhiteSpace();
     result.Number.Should().NotBeNullOrWhiteSpace();
     result.AvatarUrl.Should().NotBeNullOrWhiteSpace();

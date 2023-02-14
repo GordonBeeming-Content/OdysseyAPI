@@ -59,10 +59,9 @@ public sealed class DeleteTests
       record!.Email.Should().Be(testData[0].Email);
       record!.AvatarUrl.Should().Be(testData[0].AvatarUrl);
     }
-    var idDeleting = 1;
 
     // Act
-    var response = await _httpClient.DeleteAsync($"/Contacts/{idDeleting}");
+    var response = await _httpClient.DeleteAsync($"/Contacts/{testData[0].Id}");
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();

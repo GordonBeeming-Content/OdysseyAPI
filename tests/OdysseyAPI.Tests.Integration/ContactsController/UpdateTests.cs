@@ -75,7 +75,6 @@ public sealed class UpdateTests
       record!.Email.Should().Be(testData[0].Email);
       record!.AvatarUrl.Should().Be(testData[0].AvatarUrl);
     }
-    var idUpdating = 1;
     var request = new UpdateContactRequest
     {
       Name = $"Gordon Beeming - {Guid.NewGuid()}",
@@ -86,7 +85,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -115,8 +114,7 @@ public sealed class UpdateTests
   public async Task Update_WhenCalledWithValidId_ShouldReturnAContactModel()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var idUpdating = 1;
+    var testData = await _factory.CreateContacts(1);
     var request = new UpdateContactRequest
     {
       Name = $"Gordon Beeming - {Guid.NewGuid()}",
@@ -125,7 +123,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -139,8 +137,7 @@ public sealed class UpdateTests
   public async Task Update_WhenAvatarUrlSupplied_ShouldReturnAvatarUrl()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var idUpdating = 1;
+    var testData = await _factory.CreateContacts(1);
     var record = _faker.Generate();
     var request = new UpdateContactRequest
     {
@@ -152,7 +149,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -166,8 +163,7 @@ public sealed class UpdateTests
   public async Task Update_WhenAvatarUrlNotSupplied_ShouldReturnNoAvatarUrl()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var idUpdating = 1;
+    var testData = await _factory.CreateContacts(1);
     var record = _faker.Generate();
     var request = new UpdateContactRequest
     {
@@ -178,7 +174,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -192,8 +188,7 @@ public sealed class UpdateTests
   public async Task Update_WhenAvatarUrlNotSuppliedWithGravatarEmailSupplied_ShouldReturnGravatarAvatarUrl()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var idUpdating = 1;
+    var testData = await _factory.CreateContacts(1);
     var record = _faker.Generate();
     var request = new UpdateContactRequest
     {
@@ -206,7 +201,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
@@ -221,8 +216,7 @@ public sealed class UpdateTests
   public async Task Update_WhenAvatarUrlNotSuppliedWithInvalidGravatarEmail_ShouldReturnNoAvatarUrl()
   {
     // Arrange
-    await _factory.CreateContacts(1);
-    var idUpdating = 1;
+    var testData = await _factory.CreateContacts(1);
     var record = _faker.Generate();
     var request = new UpdateContactRequest
     {
@@ -234,7 +228,7 @@ public sealed class UpdateTests
 
     // Act
     var requestContent = JsonContent.Create(request);
-    var response = await _httpClient.PostAsync($"/Contacts/{idUpdating}", requestContent);
+    var response = await _httpClient.PostAsync($"/Contacts/{testData[0].Id}", requestContent);
 
     // Assert
     response.IsSuccessStatusCode.Should().BeTrue();
