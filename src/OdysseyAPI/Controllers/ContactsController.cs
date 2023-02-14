@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OdysseyAPI.Data;
 using OdysseyAPI.Models;
 
 namespace OdysseyAPI.Controllers;
@@ -127,7 +128,25 @@ public sealed class ContactsController : ControllerBase
       Number = dbContact.Number,
       AvatarUrl = dbContact.AvatarUrl,
     };
-    var getUri = Url.Action(nameof(GetById), new { id = response.Id, });
     return Ok(response);
+  }
+
+  [HttpDelete("{id}")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+  [Consumes("application/json")]
+  public async Task<ActionResult> Delete(int id)
+  {
+    _logger.LogInformation("Deleting contact {Contact Id}", id);
+
+    var dbContact = await _phonebookDbContext.Contacts
+      .FirstOrDefaultAsync(o => o.Id == id);
+    if (dbContact == null)
+    {
+      return NotFound();
+    }
+    _phonebookDbContext.Contacts.Remove(dbContact);
+    await _phonebookDbContext.SaveChangesAsync();
+    return Ok();
   }
 }

@@ -59,7 +59,7 @@ public sealed class UpdateTests
   }
 
   [Fact]
-  public async Task Update_TestSmokeTest()
+  public async Task Update_WhenGivenAnId_ShouldUpdateRecordWithTheId()
   {
     // Arrange
     var testData = await _factory.CreateContacts(1);
