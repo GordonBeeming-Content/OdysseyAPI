@@ -2,6 +2,8 @@
 
 This is a Demo project for the Odyssey API Integration Testing presentation. 
 
+View the presentation at https://1drv.ms/p/s!Ag-K8elnOwD9gqoB9QPcKhUOp2PoFg?e=ZGG7t6.
+
 ## Getting Started
 
 1. Make sure you have .net 7 installed on your machine.
